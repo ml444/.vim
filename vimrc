@@ -3,11 +3,12 @@
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
 
 syntax enable " 语法高亮
-set background=dark " 主题背景 dark-深色; light-浅色
-""set termguicolors   " 开启24bit的颜色，开启这个颜色会更漂亮一些
-colorscheme neodark
+" set background=dark " 主题背景 dark-深色; light-浅色
+"set termguicolors   " 开启24bit的颜色，开启这个颜色会更漂亮一些
+" colorscheme neodark
 " colorscheme molokai
-"colorscheme pydarcula
+colorscheme mydarcula
+" colorscheme darcula
 
 "Vim原始注释的颜色为蓝色极其不清楚，将其改为灰色
 "highlight Comment ctermfg=gray guifg=gray
@@ -98,8 +99,11 @@ inoremap < <><Esc>i
 inoremap { {}<Esc>i
 inoremap ' ''<Esc>i
 inoremap " ""<Esc>i
-inoremap { {<CR>}<Esc>O
-
+inoremap { {}<Esc>i
+" inoremap { {<CR>}<Esc>O
+inoremap ' <c-r>=ClosePair("'")<CR>
+inoremap " <c-r>=ClosePair('"')<CR>
+inoremap > <c-r>=ClosePair('>')<CR>
 inoremap ) <c-r>=ClosePair(')')<CR>
 inoremap ] <c-r>=ClosePair(']')<CR>
 inoremap } <c-r>=ClosePair('}')<CR>
@@ -120,23 +124,23 @@ if exists('g:loaded_minpac')
   " call minpac#add('k-takata/minpac', {'type': 'opt'})
 
   " ---Other plugins---
-"  call minpac#add('preservim/nerdtree')
-"  call minpac#add('preservim/nerdcommenter')
-"  call minpac#add('yegappan/mru')
-"  call minpac#add('fatih/vim-go')
-"  call minpac#add('Valloric/YouCompleteMe')
-"  call minpac#add('preservim/tagbar')
-"  call minpac#add('tpope/vim-fugitive')
-"  call minpac#add('airblade/vim-gitgutter')
-"  call minpac#add('vim-airline/vim-airline')
+  call minpac#add('preservim/nerdtree')
+  call minpac#add('preservim/nerdcommenter')
+  call minpac#add('yegappan/mru')
+  call minpac#add('fatih/vim-go')
+  call minpac#add('Valloric/YouCompleteMe')
+  call minpac#add('preservim/tagbar')
+  call minpac#add('tpope/vim-fugitive')
+  call minpac#add('airblade/vim-gitgutter')
+  call minpac#add('vim-airline/vim-airline')
   call minpac#add('mg979/vim-visual-multi')
   ""call minpac#add('vim-airline/vim-airline-themes')
-  ""call minpac#add('ianva/vim-youdao-translate')
+  call minpac#add('ianva/vim-youdao-translate')
   call minpac#add('git@github.com:ianva/vim-youdao-translater.git')
   call minpac#add('KeitaNakamura/neodark.vim')      " 配色方案：colorscheme neodark
-""  call minpac#add('git@github.com:preservim/vim-markdown.git')      
-  call minpac#add('iamcco/markdown-preview.vim')      
-  call minpac#add('iamcco/mathjax-support-for-mkdp')      
+  " call minpac#add('git@github.com:preservim/vim-markdown.git')      
+  " call minpac#add('iamcco/markdown-preview.vim')      
+  " call minpac#add('iamcco/mathjax-support-for-mkdp')      
 endif
 
 if has('eval')
