@@ -3,12 +3,12 @@
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
 
 syntax enable " 语法高亮
-" set background=dark " 主题背景 dark-深色; light-浅色
-"set termguicolors   " 开启24bit的颜色，开启这个颜色会更漂亮一些
-" colorscheme neodark
-" colorscheme molokai
+"set background=dark " 主题背景 dark-深色; light-浅色
+set termguicolors   " 开启24bit的颜色，开启这个颜色会更漂亮一些
+"colorscheme neodark
+"colorscheme molokai
 colorscheme mydarcula
-" colorscheme darcula
+"colorscheme darcula
 
 "Vim原始注释的颜色为蓝色极其不清楚，将其改为灰色
 "highlight Comment ctermfg=gray guifg=gray
@@ -64,6 +64,7 @@ nmap <Leader>c "+yy
 " n 模式下粘贴系统剪切板的内容
 nmap <Leader>v "+p
 
+" buffers切换快捷键
 nmap <Leader>[ :bprevious<CR>
 nmap <Leader>] :bnext<CR>
 
@@ -81,15 +82,16 @@ tmap <Leader>T <c-w>:tab term ++close<cr>
 
 
 " ---Cursor Mode settings(光标模式)---
-" 1 -> blinking block
-" 2 -> solid block
-" 3 -> blinking underscore
-" 4 -> solid underscore
-" 5 -> blinking vertical bar
-" 6 -> solid vertical bar
+" 1 -> blinking block           闪烁的方块
+" 2 -> solid block              不闪烁的方块
+" 3 -> blinking underscore      闪烁的下划线
+" 4 -> solid underscore         不闪烁的下划线
+" 5 -> blinking vertical bar    闪烁的竖线
+" 6 -> solid vertical bar       不闪烁的竖线
 let &t_SI.="\e[5 q"     " SI=Insert mode
-let &t_SR.="\e[4 q"     " SR=Replace mode
-let &t_EI.="\e[1 q"     " EI=Normal mode
+let &t_EI.="\e[1 q"     " EI=Nolmal mode
+" let &t_SR.="\e[4 q"     " SR=Replace mode
+let &t_SR = "\<Esc>[1 q" . "\<Esc>]12;green\x7"
 
 
 "--------自动补全各种括号引号------------
@@ -126,6 +128,7 @@ if exists('g:loaded_minpac')
   " ---Other plugins---
   call minpac#add('preservim/nerdtree')
   call minpac#add('preservim/nerdcommenter')
+  call minpac#add('Xuyuanp/nerdtree-git-plugin')
   call minpac#add('yegappan/mru')
   call minpac#add('fatih/vim-go')
   call minpac#add('Valloric/YouCompleteMe')
@@ -134,10 +137,9 @@ if exists('g:loaded_minpac')
   call minpac#add('airblade/vim-gitgutter')
   call minpac#add('vim-airline/vim-airline')
   call minpac#add('mg979/vim-visual-multi')
-  ""call minpac#add('vim-airline/vim-airline-themes')
-  call minpac#add('ianva/vim-youdao-translate')
+  "call minpac#add('ianva/vim-youdao-translater')
   call minpac#add('git@github.com:ianva/vim-youdao-translater.git')
-  call minpac#add('KeitaNakamura/neodark.vim')      " 配色方案：colorscheme neodark
+  "call minpac#add('KeitaNakamura/neodark.vim')      " 配色方案：colorscheme neodark
   " call minpac#add('git@github.com:preservim/vim-markdown.git')      
   " call minpac#add('iamcco/markdown-preview.vim')      
   " call minpac#add('iamcco/mathjax-support-for-mkdp')      
@@ -159,8 +161,8 @@ if !has('gui_running')
     set wildmenu
     set cpoptions-=<
     set wildcharm=<C-Z>
-    nnoremap <F10>      :emenu <C-Z>
-    inoremap <F10> <C-O>:emenu <C-Z>
+    "nnoremap <F10>      :emenu <C-Z>
+    "inoremap <F10> <C-O>:emenu <C-Z>
   endif
 endif
 
@@ -178,7 +180,7 @@ endif
 "让Tree把自己给装饰的多姿多彩漂亮点
 let NERDChristmasTree=1
 nnoremap <leader>n :NERDTreeFocus<CR>
-nnoremap <C-n> :NERDTree<CR>
+"nnoremap <C-n> :NERDTree<CR>
 nnoremap <F8> :NERDTreeToggle<CR>. " 打开树形目录
 nnoremap <C-f> :NERDTreeFind<CR>
 " 显示行号
@@ -242,8 +244,26 @@ let g:nerdtree_tabs_open_on_console_startup=1
 "===============================================================================
 ">>>>>>>>>>>>>>>> Vim-Go <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
+"let g:godef_split=2
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
+let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
+let g:go_autodetect_gopath = 1
+let g:go_list_type = "quickfix"
+
+let g:go_version_warning = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_extra_types = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_string_spellcheck = 1
+let g:go_highlight_array_whitespace_error = 1
+let g:go_highlight_chan_whitespace_error = 1
+
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -263,11 +283,16 @@ noremap <leader>yd :<C-u>Yde<CR>
 "===============================================================================
 ">>>>>>>>>>>>>>>> airline <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
+set showtabline=2
 "let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#overflow_marker = '…'
 let g:airline#extensions#tabline#show_tab_nr = 0
+""let g:airline#extensions#tabline#show_buffers= 0
+""let g:airline#extensions#tabline#show_splits = 0
+"let g:airline#extensions#tabline#show_tab_count = 0
+"let g:airline#extensions#tabline#show_close_button = 0
 
 "filetype off
 "set rtp+=~/.vim/bundle/Vundle.vim

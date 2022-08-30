@@ -1,7 +1,12 @@
 .netrwhist
 
+.idea/
 manually/
 pack/
 undodir/
+bundle/
+doc/
+plugin/
+autoload/
 vimrc_old
-.idea/
+vimrc_cml
