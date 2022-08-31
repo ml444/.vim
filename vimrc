@@ -3,12 +3,17 @@
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
 
 syntax enable " 语法高亮
-"set background=dark " 主题背景 dark-深色; light-浅色
-set termguicolors   " 开启24bit的颜色，开启这个颜色会更漂亮一些
+let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"      " 设置前景色
+let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"      " 设置背景色
+"set t_8f=^[[38;2;%lu;%lu;%lum " 设置前景色
+"set t_8b=^[[48;2;%lu;%lu;%lum " 设置背景色
 "colorscheme neodark
 "colorscheme molokai
 colorscheme mydarcula
 "colorscheme darcula
+set t_Co=256 " 启用 256 色
+set termguicolors   " 为终端启用 GUI 颜色以获得真彩色
+set background=dark " 主题背景 dark-深色; light-浅色
 
 "Vim原始注释的颜色为蓝色极其不清楚，将其改为灰色
 "highlight Comment ctermfg=gray guifg=gray
@@ -18,6 +23,8 @@ colorscheme mydarcula
 " 退出插入模式指定类型的文件自动保存
 au InsertLeave *.go,*.sh,*.py write
 
+":autocmd InsertEnter * set timeoutlen=200
+":autocmd InsertLeave * set timeoutlen=1000
 
 
 "--------缩进相关设置--------
@@ -30,11 +37,14 @@ set shiftwidth=4    " 回车插入时自动缩进数
 set expandtab 		" 制表符转空格converting tabs to spaces
 set smarttab        " 在行和段开始处使用制表符
 
+
+set timeoutlen=500
 set backspace=2 " 解决：删除键(backspace)只能删除到行首不能跳到上一行
 set noeb " 去掉输入错误的提示声音
 set showcmd  " 输入的命令显示出来，看的清楚些 
 set background=dark  " 背景使用黑色 
 set enc=utf-8
+"set guifont=Courier_new:h20
 set nu      " 显示行号
 set nobackup
 set undofile
@@ -49,6 +59,12 @@ if &compatible
   " only when 'compatible' is set.
   set nocompatible
 endif
+
+set ignorecase  " 搜索时忽略大小写
+set smartcase   " 若搜索内容中有大写字母，则不再忽略大小写
+
+set colorcolumn=80  " 高亮第80列
+set cursorline      " 高亮光标所在行
 
 " 定义快捷键的前缀，即<Leader>
 "let mapleader=";"
@@ -117,6 +133,11 @@ function! ClosePair(char)
     endif
 endfunction
 
+autocmd BufReadPost *
+      \ if line("'\"") >= 1 && line("'\"") <= line("$")
+      \ |   exe "normal! g`\""
+      \ | endif
+
 
 set packpath^=~/.vim
 " git clone https://github.com/k-takata/minpac.git ~/.vim/pack/minpac/opt/minpac
@@ -181,7 +202,7 @@ endif
 let NERDChristmasTree=1
 nnoremap <leader>n :NERDTreeFocus<CR>
 "nnoremap <C-n> :NERDTree<CR>
-nnoremap <F8> :NERDTreeToggle<CR>. " 打开树形目录
+nnoremap <F6> :NERDTreeToggle<CR>. " 打开树形目录
 nnoremap <C-f> :NERDTreeFind<CR>
 " 显示行号
 let NERDTreeShowLineNumbers=1
@@ -264,11 +285,13 @@ let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 
+"nnoremap <Leader>l :GoFmt<CR>
+"au InsertLeave *.go GoFmt<CR>
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
-nmap <F10> :TagbarToggle<CR>
+nmap <F7> :TagbarToggle<CR>
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> vim-youdao-translater <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
