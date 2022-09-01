@@ -3,16 +3,16 @@
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
 
 syntax enable " 语法高亮
-let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"      " 设置前景色
-let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"      " 设置背景色
-"set t_8f=^[[38;2;%lu;%lu;%lum " 设置前景色
-"set t_8b=^[[48;2;%lu;%lu;%lum " 设置背景色
+if !($TERM_PROGRAM == "Apple_Terminal")
+    "let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"      " 设置前景色
+    "let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"      " 设置背景色
+	set termguicolors       " 为终端启用 GUI 颜色以获得真彩色(24色)
+endif
+
 "colorscheme neodark
 "colorscheme molokai
 colorscheme mydarcula
-"colorscheme darcula
 set t_Co=256 " 启用 256 色
-set termguicolors   " 为终端启用 GUI 颜色以获得真彩色
 set background=dark " 主题背景 dark-深色; light-浅色
 
 "Vim原始注释的颜色为蓝色极其不清楚，将其改为灰色
@@ -164,6 +164,8 @@ if exists('g:loaded_minpac')
   " call minpac#add('git@github.com:preservim/vim-markdown.git')      
   " call minpac#add('iamcco/markdown-preview.vim')      
   " call minpac#add('iamcco/mathjax-support-for-mkdp')      
+  call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
+  call minpac#add('junegunn/fzf.vim')
 endif
 
 if has('eval')
