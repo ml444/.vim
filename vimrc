@@ -211,7 +211,7 @@ let NERDTreeShowLineNumbers=1
 " 打开文件时是否显示目录
 let NERDTreeAutoCenter=1
 " 是否显示隐藏文件
-let NERDTreeShowHidden=0
+let NERDTreeShowHidden=1
 " 设置宽度
 " let NERDTreeWinSize=31
 " 忽略一下文件的显示
@@ -272,7 +272,8 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
 let g:go_autodetect_gopath = 1
-let g:go_list_type = "quickfix"
+let g:go_list_type = "quickfix"  " locationlist
+let g:go_auto_sameids = 1       " 相同变量或函数方法高亮显示
 
 let g:go_version_warning = 1
 let g:go_highlight_types = 1
