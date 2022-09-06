@@ -313,6 +313,7 @@ call s:hi('String',                    s:str_green,        '',         '')
 call s:hi('Character',                 s:green,        '',         '')
 call s:hi('Identifier',                s:teal,          '',         'none')
 call s:hi('Function',                  s:golden_yellow,          '',         '')
+call s:hi('Number',                  s:light_blue,          '',         '')
 call s:hi('Statement',                 s:orange,         '',         'none')
 call s:hi('Exception',                 s:red,           '',         '')
 call s:hi('PreProc',                   s:purple,        '',         '')
@@ -329,6 +330,9 @@ call s:hi('Conceal',                   s:golden_yellow, s:base1,    '')
 
 " Languages {{{
 " Go {{{
+"call s:hi('goConst', s:const_purple, '', '')
+"call s:hi('goFunctionReturn', s:const_purple, '', '')
+"call s:hi('goOperator', s:const_purple, '', '')
 call s:hi('goFunction', s:yellow, '', '')
 call s:hi('goTypeName', s:teal, '', '')
 call s:hi('goReceiverType', s:light_sea_green, '', '')
