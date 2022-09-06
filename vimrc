@@ -3,7 +3,7 @@
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
 
 syntax enable " 语法高亮
-if !($TERM_PROGRAM == "Apple_Terminal")
+if !(($TERM_PROGRAM == "Apple_Terminal")||($TERM_PROGRAM == ""))
     "let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"      " 设置前景色
     "let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"      " 设置背景色
 	set termguicolors       " 为终端启用 GUI 颜色以获得真彩色(24色)
@@ -65,9 +65,15 @@ set smartcase   " 若搜索内容中有大写字母，则不再忽略大小写
 
 set colorcolumn=80  " 高亮第80列
 set cursorline      " 高亮光标所在行
+set mouse=a         " 使能鼠标
+"let mapleader=";"  " 定义快捷键的前缀，即<Leader>
 
-" 定义快捷键的前缀，即<Leader>
-"let mapleader=";"
+
+nnoremap <Leader-Tab> <C-W>w
+inoremap <Leader-Tab> <C-O><C-W>w
+nnoremap <S-Tab> <C-W>W
+inoremap <S-Tab> <C-O><C-W>W
+
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> 系统剪切板复制粘贴 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -113,15 +119,15 @@ let &t_SR = "\<Esc>[1 q" . "\<Esc>]12;green\x7"
 "--------自动补全各种括号引号------------
 inoremap ( ()<Esc>i
 inoremap [ []<Esc>i
-inoremap < <><Esc>i
+"inoremap < <><Esc>i
 inoremap { {}<Esc>i
 inoremap ' ''<Esc>i
 inoremap " ""<Esc>i
 inoremap { {}<Esc>i
 " inoremap { {<CR>}<Esc>O
-inoremap ' <c-r>=ClosePair("'")<CR>
-inoremap " <c-r>=ClosePair('"')<CR>
-inoremap > <c-r>=ClosePair('>')<CR>
+"inoremap ' <c-r>=ClosePair("'")<CR>
+"inoremap " <c-r>=ClosePair('"')<CR>
+"inoremap > <c-r>=ClosePair('>')<CR>
 inoremap ) <c-r>=ClosePair(')')<CR>
 inoremap ] <c-r>=ClosePair(']')<CR>
 inoremap } <c-r>=ClosePair('}')<CR>
@@ -288,7 +294,7 @@ let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 
-"nnoremap <Leader>l :GoFmt<CR>
+nnoremap <C-S-l> :GoFmt<CR>
 "au InsertLeave *.go GoFmt<CR>
 
 "===============================================================================
