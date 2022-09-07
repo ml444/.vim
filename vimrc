@@ -22,7 +22,7 @@ set background=dark " 主题背景 dark-深色; light-浅色
 
 " 退出插入模式指定类型的文件自动保存
 au InsertLeave *.go,*.sh,*.py write
-
+au BufRead,BufNewFile *.go set filetype=go
 ":autocmd InsertEnter * set timeoutlen=200
 ":autocmd InsertLeave * set timeoutlen=1000
 
@@ -145,6 +145,7 @@ autocmd BufReadPost *
       \ | endif
 
 
+"filetype off
 set packpath^=~/.vim
 " git clone https://github.com/k-takata/minpac.git ~/.vim/pack/minpac/opt/minpac
 if exists('g:loaded_minpac')
@@ -173,6 +174,9 @@ if exists('g:loaded_minpac')
   call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
   call minpac#add('junegunn/fzf.vim')
 endif
+
+filetype plugin indent on
+
 
 if has('eval')
   " Minpac commands
@@ -293,6 +297,7 @@ let g:go_highlight_generate_tags = 1
 let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
+let g:go_highlight_build_constraints = 1
 
 nnoremap <C-S-l> :GoFmt<CR>
 "au InsertLeave *.go GoFmt<CR>
@@ -363,13 +368,6 @@ let g:airline#extensions#tabline#show_tab_nr = 0
 ">>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
 
-"filetype off
-"set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
-"Plugin 'fatih/vim-go'
-"Plugin 'gmarik/Vundle.vim'
-"call vundle#end()
-filetype plugin indent on
 
 
 
