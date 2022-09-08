@@ -1,6 +1,12 @@
 "========================================"
 " let do_syntax_sel_menu = 1 "菜单加载所有文件类型
 " let do_no_lazyload_menus = 1 "菜单的延迟加载
+" 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
+if &compatible
+  " `:set nocp` has many side effects. Therefore this should be done
+  " only when 'compatible' is set.
+  set nocompatible
+endif
 
 syntax enable " 语法高亮
 if !(($TERM_PROGRAM == "Apple_Terminal")||($TERM_PROGRAM == ""))
@@ -36,16 +42,24 @@ set shiftwidth=4    " 回车插入时自动缩进数
 "set noexpandtab    " 不要用空格代替制表符
 set expandtab 		" 制表符转空格converting tabs to spaces
 set smarttab        " 在行和段开始处使用制表符
+set backspace=2     " 解决：删除键(backspace)只能删除到行首不能跳到上一行
+"set smartindent     " 开启新行时使用智能自动缩进
 
 
-set timeoutlen=500
-set backspace=2 " 解决：删除键(backspace)只能删除到行首不能跳到上一行
-set noeb " 去掉输入错误的提示声音
-set showcmd  " 输入的命令显示出来，看的清楚些 
-set background=dark  " 背景使用黑色 
+"--------------cmd-----------------
+"set cmdheight=1    " 设定命令行的行数为 1
+set showcmd         " 输入的命令显示出来，看的清楚些 
+
 set enc=utf-8
 "set guifont=Courier_new:h20
-set nu      " 显示行号
+"set guioptions-=T " 隐藏工具栏
+"set guioptions-=m " 隐藏菜单栏
+set nu              " 显示行号
+set timeoutlen=500
+set noeb            " 去掉输入错误的提示声音
+
+"-----------backup------------------"
+"set backupcopy=yes " 设置备份时的行为为覆盖
 set nobackup
 set undofile
 set undodir=~/.vim/undodir
@@ -53,26 +67,55 @@ if !isdirectory(&undodir)
 	call mkdir(&undodir, 'p', 0700)
 endif
 
-" 去掉讨厌的有关vi一致性模式，避免以前版本的一些bug和局限
-if &compatible
-  " `:set nocp` has many side effects. Therefore this should be done
-  " only when 'compatible' is set.
-  set nocompatible
-endif
+"---------------状态栏-------------"
+"set laststatus=2 " 显示状态栏 (默认值为 1, 无法显示状态栏)
+"set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&encoding}\ %c:%l/%L%)\   " 设置在状态行显示的信息
 
+
+"-------------搜索-----------------
 set ignorecase  " 搜索时忽略大小写
 set smartcase   " 若搜索内容中有大写字母，则不再忽略大小写
+set nowrapscan  " 禁止在搜索到文件两端时重新搜索
+set incsearch   " 输入搜索内容时就显示搜索结果
+set hlsearch    " 搜索时高亮显示被找到的文本
 
 set colorcolumn=80  " 高亮第80列
 set cursorline      " 高亮光标所在行
 set mouse=a         " 使能鼠标
+set autochdir       " 自动切换当前目录为当前文件所在的目录
 "let mapleader=";"  " 定义快捷键的前缀，即<Leader>
 
 
-nnoremap <Leader-Tab> <C-W>w
-inoremap <Leader-Tab> <C-O><C-W>w
+nnoremap <Leader><Tab> <C-W>w
+inoremap <Leader><Tab> <C-O><C-W>w
 nnoremap <S-Tab> <C-W>W
 inoremap <S-Tab> <C-O><C-W>W
+
+
+
+"===============================================================================
+">>>>>>>>>>>>>>>> 折叠（fold）<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+"za	打开/关闭当前的折叠
+"zc	关闭当前打开的折叠
+"zo	打开当前的折叠
+"zm	关闭所有折叠
+"zM	关闭所有折叠及其嵌套的折叠
+"zr	打开所有折叠
+"zR	打开所有折叠及其嵌套的折叠
+"zd	删除当前折叠
+"zE	删除所有折叠
+"zj	移动至下一个折叠
+"zk	移动至上一个折叠
+"zn	禁用折叠
+"zN	启用折叠
+"===============================================================================
+set foldenable " 开始折叠
+set foldmethod=syntax " 设置语法折叠
+set foldcolumn=0 " 设置折叠区域的宽度
+setlocal foldlevel=1 " 设置折叠层数为
+" set foldclose=all " 设置为自动关闭折叠
+" nnoremap <space> @=((foldclosed(line(’.’)) < 0) ? ‘zc’ : ‘zo’)<CR>    " 用空格键来开关折叠
+
 
 
 "===============================================================================
@@ -306,6 +349,39 @@ nnoremap <C-S-l> :GoFmt<CR>
 ">>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
 nmap <F7> :TagbarToggle<CR>
+
+"let g:tagbar_autopreview = 1 "开启自动预览(随着光标在标签上的移动，顶部会出现一个实时的预览窗口 
+let g:tagbar_sort = 0 "关闭排序,即按标签本身在文件中的位置排序
+"let g:tagbar_left = 1 "默认在右边，设置在左边
+let g:tagbar_width = 30 "宽度
+let g:tagbar_type_go = { 
+    \ 'ctagstype' : 'go',
+    \ 'kinds'     : [ 
+        \ 'p:package',
+        \ 'i:imports:1',
+        \ 'c:constants',
+        \ 'v:variables',
+        \ 't:types',
+        \ 'n:interfaces',
+        \ 'w:fields',
+        \ 'e:embedded',
+        \ 'm:methods',
+        \ 'r:constructor',
+        \ 'f:functions'
+    \ ],
+    \ 'sro' : '.',
+    \ 'kind2scope' : { 
+        \ 't' : 'ctype',
+        \ 'n' : 'ntype'
+    \ },
+    \ 'scope2kind' : { 
+        \ 'ctype' : 't',
+        \ 'ntype' : 'n'
+    \ },
+    \ 'ctagsbin'  : 'gotags',
+    \ 'ctagsargs' : '-sort -silent'
+\ }
+
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> vim-youdao-translater <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
