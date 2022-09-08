@@ -311,7 +311,7 @@ call s:hi('Comment',                   s:base4,         '',         'italic')
 call s:hi('Constant',                  s:const_purple,           '',         '')
 call s:hi('String',                    s:str_green,        '',         '')
 call s:hi('Character',                 s:green,        '',         '')
-call s:hi('Identifier',                s:teal,          '',         'none')
+call s:hi('Identifier',                s:purple,          '',         'none')
 call s:hi('Function',                  s:golden_yellow,          '',         '')
 call s:hi('Number',                  s:light_blue,          '',         '')
 call s:hi('Statement',                 s:orange,         '',         'none')
@@ -339,10 +339,11 @@ call s:hi('goReceiverType', s:light_sea_green, '', '')
 call s:hi('goReceiverVar', s:dodger_blue, '', '')
 call s:hi('goReceiverDecl', s:green, '', '')
 call s:hi('goExtraType', s:light_sea_green, '', '')
+call s:hi('goField', s:dark_turquoise, '', '')
 hi! link goFunctionCall Function
 hi! link goMethodCall   Function
 " }}}
-" Vim {{{
+" Vim {{dark_turquoise{
 hi! link vimFunc     Function
 hi! link vimUserFunc Function
 call s:hi('vimLet',                    s:yellow,     '',         '')
