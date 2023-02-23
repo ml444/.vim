@@ -166,6 +166,7 @@ let s:light_sea_green = ['#20B2AA', 100]
 let s:str_green = ['#6A8759', 101]
 let s:doc_green = ['#629755', 65]
 let s:const_purple = ['#9876AA', 103]
+let s:int_blue = ['#6a92b9', 85]
 
 if g:mydarcula#use_256color == 1
   let s:base1[0] = '#303030'
@@ -312,8 +313,9 @@ call s:hi('Constant',                  s:const_purple,           '',         '')
 call s:hi('String',                    s:str_green,        '',         '')
 call s:hi('Character',                 s:green,        '',         '')
 call s:hi('Identifier',                s:purple,          '',         'none')
+call s:hi('Integer',                   s:int_blue,          '',         'none')
 call s:hi('Function',                  s:golden_yellow,          '',         '')
-call s:hi('Number',                  s:light_blue,          '',         '')
+call s:hi('Number',                    s:light_blue,          '',         '')
 call s:hi('Statement',                 s:orange,         '',         'none')
 call s:hi('Exception',                 s:red,           '',         '')
 call s:hi('PreProc',                   s:purple,        '',         '')
@@ -335,6 +337,7 @@ call s:hi('Conceal',                   s:golden_yellow, s:base1,    '')
 "call s:hi('goOperator', s:const_purple, '', '')
 call s:hi('goFunction', s:yellow, '', '')
 call s:hi('goTypeName', s:teal, '', '')
+call s:hi('goImport', s:teal, '', '')
 call s:hi('goReceiverType', s:light_sea_green, '', '')
 call s:hi('goReceiverVar', s:dodger_blue, '', '')
 call s:hi('goReceiverDecl', s:green, '', '')

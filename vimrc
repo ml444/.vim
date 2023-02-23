@@ -26,11 +26,14 @@ set background=dark " 主题背景 dark-深色; light-浅色
 " 用下划线展示当前行
 ""autocmd InsertEnter * se cul
 
+
+
 " 退出插入模式指定类型的文件自动保存
 au InsertLeave *.go,*.sh,*.py write
 au BufRead,BufNewFile *.go set filetype=go
 ":autocmd InsertEnter * set timeoutlen=200
 ":autocmd InsertLeave * set timeoutlen=1000
+autocmd!   BufNewFile,BufRead *    setlocal nofoldenable
 
 
 "--------缩进相关设置--------
@@ -60,12 +63,17 @@ set noeb            " 去掉输入错误的提示声音
 
 "-----------backup------------------"
 "set backupcopy=yes " 设置备份时的行为为覆盖
-set nobackup
+set nobackup        "取消自动备份
+set noswapfile      "取消产生swp文件
 set undofile
 set undodir=~/.vim/undodir
 if !isdirectory(&undodir)
 	call mkdir(&undodir, 'p', 0700)
 endif
+
+
+set autoread    "当文件被外部改变时自动读取
+
 
 "---------------状态栏-------------"
 "set laststatus=2 " 显示状态栏 (默认值为 1, 无法显示状态栏)
@@ -78,14 +86,21 @@ set smartcase   " 若搜索内容中有大写字母，则不再忽略大小写
 set nowrapscan  " 禁止在搜索到文件两端时重新搜索
 set incsearch   " 输入搜索内容时就显示搜索结果
 set hlsearch    " 搜索时高亮显示被找到的文本
+" 取消搜索高亮
+nnoremap <silent> <F2>      :nohlsearch<CR>     
+inoremap <silent> <F2> <C-O>:nohlsearch<CR>
 
 set colorcolumn=80  " 高亮第80列
 set cursorline      " 高亮光标所在行
-set mouse=a         " 使能鼠标
+set mouse=a         " 允许鼠标点击定位
 set autochdir       " 自动切换当前目录为当前文件所在的目录
 "let mapleader=";"  " 定义快捷键的前缀，即<Leader>
 
+"inoremap <S><CR> <Esc>o
+"nnoremap <S><CR> o
 
+
+" -----------窗口切换---------------
 nnoremap <Leader><Tab> <C-W>w
 inoremap <Leader><Tab> <C-O><C-W>w
 nnoremap <S-Tab> <C-W>W
@@ -268,7 +283,7 @@ let NERDTreeShowHidden=1
 " 设置宽度
 " let NERDTreeWinSize=31
 " 忽略一下文件的显示
-let NERDTreeIgnore=['\.pyc','\~$','\.swp']
+let NERDTreeIgnore=['\.pyc','\~$','\.swp', '.idea']
 " 打开 vim 文件及显示书签列表
 let NERDTreeShowBookmarks=2
 
@@ -314,7 +329,7 @@ let g:nerdtree_tabs_open_on_console_startup=1
 " - `[c` 和 `]c` 可以用来跳转到上一个和下一个修改的位置
 " - `<Leader>hp` 可以将光标下的修改块和缓存区中的内容进行对比
 " - `<Leader>hs` 可以将光标下的修改块加入到暂存区中
-" - `<Leader>hu` 可以恢复暂存区中的内容
+" - `<Leader>hu` 可以恢复暂存区中的内容 
 
 
 "===============================================================================
@@ -399,10 +414,13 @@ noremap <leader>yd :<C-u>Yde<CR>
 set showtabline=2
 "let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'unique_tail'  "default/jsformatter/unique_tail/unique_tail_improved
+let g:airline#extensions#tabline#show_buffers= 0
+"let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#overflow_marker = '…'
 let g:airline#extensions#tabline#show_tab_nr = 0
-""let g:airline#extensions#tabline#show_buffers= 0
 ""let g:airline#extensions#tabline#show_splits = 0
 "let g:airline#extensions#tabline#show_tab_count = 0
 "let g:airline#extensions#tabline#show_close_button = 0
