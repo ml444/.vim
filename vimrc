@@ -418,7 +418,7 @@ let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'  "default/jsformatter/unique_tail/unique_tail_improved
 let g:airline#extensions#tabline#show_buffers= 0
-"let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#overflow_marker = '…'
 let g:airline#extensions#tabline#show_tab_nr = 0
 ""let g:airline#extensions#tabline#show_splits = 0
@@ -459,10 +459,51 @@ let g:airline#extensions#tabline#show_tab_nr = 0
 
 
 "===============================================================================
-">>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+">>>>>>>>>>>>>>>> YouCompleteMe <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
+nnoremap <Leader>fi :YcmCompleter FixIt<CR>     
+nnoremap <Leader>gt :YcmCompleter GoTo<CR>      "无脑跳转，最常用的就是这个功能，如果能跳转到定义，就跳转到定义，否则就跳转到声明
+nnoremap <Leader>gd :YcmCompleter GoToDefinition<CR>    "跳转到定义
+nnoremap <Leader>gh :YcmCompleter GoToDeclaration<CR>   "跳转到声明
+nnoremap <Leader>gr :YcmCompleter GoToReferences<CR>    "可以用来查出一个符号被引用的地方（libclang 引擎不支持该命令）
 
+"用来禁用光标在一个符号上长期停留出现的自动文档提示:
+"let g:ycm_auto_hover = ''
 
+"表示在写注释的时候也能启用自动完成——毕竟注释里通常也要写代码里的变量、函数名什么的。
+let g:ycm_complete_in_comments = 1
+
+"用来仅对白名单列表里的文件类型才启用 YCM。没有这一项，YCM 在打开一些特殊类型的文件时可能会报错，有时候也会导致打开的延迟。
+"let g:ycm_filetype_whitelist = {
+      "\ 'c': 1,
+      "\ 'cpp': 1,
+      "\ 'python': 1,
+      "\ 'vim': 1,
+      "\ 'sh': 1,
+      "\ 'zsh': 1,
+      "\ }
+
+"用来告诉 YCM，当跳转的目的文件尚未打开时，用分割窗口的方式打开新文件；如果已经打开则跳转到相应的窗口。
+"其他的可能值是 `'same-buffer'`，在同一个缓冲区的位置打开（除非这个位置因为文件修改的原因不能被替换），
+"及 `'split'`，除非跳转目的在同一个文件，永远在新分割的窗口打开。
+let g:ycm_goto_buffer_command = 'split-or-existing-window'
+
+"用来定义手工启用语义完成的按键。
+"在你输入时，YCM 会自动尝试标识符匹配，而当你输入 `.`、 `->`、 `::` 或这个按键时，
+"YCM 则会启用语义完成，来给出当前上下文中允许出现的符号。
+"这个按键默认是 `<C-Space>`，在某些操作系统上是不能用的（如 Mac 和老的 Windows），
+"所以我改成了 `<C-Z>`。你也可以选择你自己喜欢的按键
+"（但要注意映射冲突问题：Vim 里在插入模式下的可用键不多，
+"事实上只有在终端下容易出问题的 `<C-S>` 和 `<C-Z>` 在 Vim 里没有默认功能）。
+"let g:ycm_key_invoke_completion = '<C-Z>'
+
+"重命名的重构.不能通过按键映射
+"这个命令需要你把光标移到要修改的符号上，然后输入的命令里要有新的名称。
+"比如，如果你要把一个 `foo` 符号重命名成 `bar`，需要把光标移动 `foo` 上面，然后输入：
+":YcmCompleter RefactorRename bar
+"
+"YCM 默认只在屏幕底部显示当前行的问题，并且显示很可能被截断。
+"要看到所有的代码问题，可以使用命令 `:YcmDiags`。
 
 
 " ---你就得让Vim知道，你到底是在输入还是在粘贴----
