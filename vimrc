@@ -29,7 +29,7 @@ set background=dark " 主题背景 dark-深色; light-浅色
 
 
 " 退出插入模式指定类型的文件自动保存
-au InsertLeave *.go,*.sh,*.py write
+au InsertLeave *.go,*.sh,*.py,*.tmpl write
 au BufRead,BufNewFile *.go set filetype=go
 ":autocmd InsertEnter * set timeoutlen=200
 ":autocmd InsertLeave * set timeoutlen=1000
@@ -60,6 +60,10 @@ set enc=utf-8
 set nu              " 显示行号
 set timeoutlen=500
 set noeb            " 去掉输入错误的提示声音
+
+
+" 关闭补全的额外信息的preview窗口
+set completeopt-=preview
 
 "-----------backup------------------"
 "set backupcopy=yes " 设置备份时的行为为覆盖
@@ -113,7 +117,7 @@ inoremap <S-Tab> <C-O><C-W>W
 "za	打开/关闭当前的折叠
 "zc	关闭当前打开的折叠
 "zo	打开当前的折叠
-"zm	关闭所有折叠
+"zm	折叠所有
 "zM	关闭所有折叠及其嵌套的折叠
 "zr	打开所有折叠
 "zR	打开所有折叠及其嵌套的折叠
@@ -184,7 +188,7 @@ inoremap " ""<Esc>i
 inoremap { {}<Esc>i
 " inoremap { {<CR>}<Esc>O
 "inoremap ' <c-r>=ClosePair("'")<CR>
-"inoremap " <c-r>=ClosePair('"')<CR>
+inoremap " <c-r>=ClosePair('"')<CR>
 "inoremap > <c-r>=ClosePair('>')<CR>
 inoremap ) <c-r>=ClosePair(')')<CR>
 inoremap ] <c-r>=ClosePair(']')<CR>
@@ -217,20 +221,27 @@ if exists('g:loaded_minpac')
   call minpac#add('Xuyuanp/nerdtree-git-plugin')
   call minpac#add('yegappan/mru')
   call minpac#add('fatih/vim-go')
+  " go 中的代码追踪，输入 gd 就可以自动跳转
+  call minpac#add('dgryski/vim-godef')
   call minpac#add('Valloric/YouCompleteMe')
   call minpac#add('preservim/tagbar')
   call minpac#add('tpope/vim-fugitive')
   call minpac#add('airblade/vim-gitgutter')
   call minpac#add('vim-airline/vim-airline')
   call minpac#add('mg979/vim-visual-multi')
-  "call minpac#add('ianva/vim-youdao-translater')
+  call minpac#add('ianva/vim-youdao-translater')
   call minpac#add('git@github.com:ianva/vim-youdao-translater.git')
   "call minpac#add('KeitaNakamura/neodark.vim')      " 配色方案：colorscheme neodark
   " call minpac#add('git@github.com:preservim/vim-markdown.git')      
-  " call minpac#add('iamcco/markdown-preview.vim')      
-  " call minpac#add('iamcco/mathjax-support-for-mkdp')      
+   call minpac#add('iamcco/markdown-preview.vim')      
+   call minpac#add('iamcco/mathjax-support-for-mkdp')      
   call minpac#add('junegunn/fzf', {'do': {-> fzf#install()}})
   call minpac#add('junegunn/fzf.vim')
+  " 自动补全括号的插件，包括小括号，中括号，以及花括号
+  call minpac#add('jiangmiao/auto-pairs')   
+  " 下面两个插件要配合使用，可以自动生成代码块
+  call minpac#add('SirVer/ultisnips')
+  call minpac#add('honza/vim-snippets')
 endif
 
 filetype plugin indent on
@@ -321,6 +332,16 @@ let g:nerdtree_tabs_open_on_console_startup=1
 " - 使用 `dv` 来比较文件和暂存区版本的区别
 " - 使用 `cc` 来签入（commit）当前暂存区中的文件，相当于 `:Git commit` 命令
 
+":Gstatus调出git status查看当前状态；
+" -添加或删除文件；
+" p为当前文件运行git add -patch；
+" Gcommit提交当前文件，编辑提交当前运行的Vim的内部消息，完了以后输入命令Gwrite保存提交；
+" :Gblame带来git blame 输出的交互式垂直分割。按行上的Enter键以编辑行更改的提交，或者o在拆分中打开它；
+" :Gedit 历史缓冲区返回工作树版本；
+" :Gmove做了git mv一个文件，同时重命名的缓冲区；
+" :Gdelete做了git rm一个文件，同时删除该缓冲区；
+" :Gread是git checkout -- filename缓冲区而不是文件名的变体
+
 
 
 "===============================================================================
@@ -340,7 +361,7 @@ let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
 let g:go_autodetect_gopath = 1
-let g:go_list_type = "quickfix"  " locationlist
+let g:go_list_type = "locationlist"  " locationlist | quickfix
 let g:go_auto_sameids = 1       " 相同变量或函数方法高亮显示
 
 let g:go_version_warning = 1
@@ -359,6 +380,34 @@ let g:go_highlight_build_constraints = 1
 
 nnoremap <C-S-l> :GoFmt<CR>
 "au InsertLeave *.go GoFmt<CR>
+
+" 编译包
+" :GoBuild
+" 安装包
+" :GoInstall
+" 测试包
+" :GoTest
+" 测试函数
+" :GoTestFunc
+" 快速执行当前文件
+" :GoRun
+" delve支持
+" :GoDebugStart
+" 声明
+" :GoDef
+" 查找文档
+" :GoDoc / :GoDocBrowser
+" 加载/移除包
+" :GoImport / GoDrop
+" type-safe renaming
+" :GoRename
+" 查看test覆盖率
+" :GoCoverage.
+" 增加/移除 tags
+" :GoAddTags / :GoRemoveTags
+" Call golangci-lint with :GoMetaLinter to invoke all possible linters (golint, vet, errcheck, deadcode, etc.) and put the result in the quickfix or location list.
+" Lint your code with :GoLint, run your code through :GoVet to catch static errors, or make sure errors are checked with :GoErrCheck.
+" ... and many more! Please see doc/vim-go.txt for more information.
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -417,8 +466,8 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'  "default/jsformatter/unique_tail/unique_tail_improved
-let g:airline#extensions#tabline#show_buffers= 0
-let g:airline#extensions#tabline#buffer_nr_show = 1
+"let g:airline#extensions#tabline#show_buffers= 0
+"let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#overflow_marker = '…'
 let g:airline#extensions#tabline#show_tab_nr = 0
 ""let g:airline#extensions#tabline#show_splits = 0
@@ -505,6 +554,19 @@ let g:ycm_goto_buffer_command = 'split-or-existing-window'
 "YCM 默认只在屏幕底部显示当前行的问题，并且显示很可能被截断。
 "要看到所有的代码问题，可以使用命令 `:YcmDiags`。
 
+
+"配置和 SirVer/ultisnips 冲突的快捷键
+let g:ycm_key_list_select_completion = ['<C-n>', '<space>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+
+" =========================================
 
 " ---你就得让Vim知道，你到底是在输入还是在粘贴----
 " ---手工设置: before（:set paste）after（:set nopaste）
