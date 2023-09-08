@@ -214,6 +214,13 @@ if exists('g:loaded_minpac')
   " Minpac is loaded.
   call minpac#init()
   " call minpac#add('k-takata/minpac', {'type': 'opt'})
+  
+  call minpac#add('buoto/gotests-vim')
+
+  " Peekaboo will show you the contents of the registers on the sidebar 
+  " when you hit " or @ in normal mode or <CTRL-R> in insert mode. 
+  " The sidebar is automatically closed on subsequent key strokes.
+  call minpac#add('junegunn/vim-peekaboo')
 
   " ---Other plugins---
   call minpac#add('preservim/nerdtree')
@@ -242,6 +249,11 @@ if exists('g:loaded_minpac')
   " 下面两个插件要配合使用，可以自动生成代码块
   call minpac#add('SirVer/ultisnips')
   call minpac#add('honza/vim-snippets')
+
+  call minpac#add('github/copilot.vim')
+  " protobuf 语法高亮
+  call minpac#add('uarun/vim-protobuf')
+  call minpac#add('rhysd/vim-clang-format')
 endif
 
 filetype plugin indent on
@@ -301,7 +313,18 @@ let NERDTreeShowBookmarks=2
 " 在终端启动vim时，共享NERDTree 
 let g:nerdtree_tabs_open_on_console_startup=1
 
-
+augroup nerdtree_
+    autocmd!
+    " autocmd vimenter * NERDTree
+    " 设置自动触发命令
+    autocmd StdinReadPre * let s:std_in=1
+    " 打开vim时没有指定打开的文件，自动打开目录树
+    autocmd VimEnter * if argc() == 0 && !exists("s:std_in") && winnr('$') < 2 | NERDTree | endif
+    " 打开vim时指定打开的目录，自动打开目录树
+    autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+    " 如果vim中只剩目录树一个面板，关闭vim
+    autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+augroup END
 
 "===============================================================================
 ">>>>>>>>>>>>>>>> NERDCommenter <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -357,16 +380,26 @@ let g:nerdtree_tabs_open_on_console_startup=1
 ">>>>>>>>>>>>>>>> Vim-Go <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 "===============================================================================
 "let g:godef_split=2
+let g:godef_split=3 """左右打开新窗口的时候
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
 let g:go_fmt_command = "goimports" " 格式化将默认的 gofmt 替换
 let g:go_autodetect_gopath = 1
 let g:go_list_type = "locationlist"  " locationlist | quickfix
 let g:go_auto_sameids = 1       " 相同变量或函数方法高亮显示
+" Use new vim 8.2 popup windows for Go Doc
+let g:go_doc_popup_window = 1
+"let g:go_doc_popup_width = 80
+"let g:go_doc_popup_maxheight = 30
+"let g:go_doc_popup_maxwidth = 120
+
+let g:go_highlight_fold_enable = 1
+let g:godef_same_file_in_same_window=1 """函数在同一个文件中时不需要打开新窗口
 
 let g:go_version_warning = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
+let g:go_highlight_structs = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_function_calls = 1
 let g:go_highlight_operators = 1
@@ -377,9 +410,30 @@ let g:go_highlight_string_spellcheck = 1
 let g:go_highlight_array_whitespace_error = 1
 let g:go_highlight_chan_whitespace_error = 1
 let g:go_highlight_build_constraints = 1
+let g:go_highlight_format_strings = 1
+"let g:go_highlight_variable_declarations = 1
+"let g:go_highlight_variable_assignments = 1
+let g:go_highlight_function_parameters = 1
+let g:go_highlight_modifiers = 1
+let g:go_highlight_pkg_aliases = 1
 
+nnoremap <S-F6> :GoRename<CR>
 nnoremap <C-S-l> :GoFmt<CR>
 "au InsertLeave *.go GoFmt<CR>
+"au BufWrite *.go GoImports<CR>
+"au BufWrite *.go GoFmt<CR>
+
+au FileType go nmap <leader>r <Plug>(go-run)
+au FileType go nmap <leader>b <Plug>(go-build)
+"au FileType go nmap <leader>t <Plug>(go-test)
+"au FileType go nmap <leader>c <Plug>(go-coverage-toggle)
+au FileType go nmap <Leader>e <Plug>(go-rename)
+au FileType go nmap <Leader>s <Plug>(go-implements)
+au FileType go nmap <Leader>i <Plug>(go-info)
+
+autocmd BufRead /home/cml/git.csautodriver.com/spp/*.go
+        \ :GoGuruScope git.csautodriver.com/spp
+
 
 " 编译包
 " :GoBuild
@@ -395,14 +449,20 @@ nnoremap <C-S-l> :GoFmt<CR>
 " :GoDebugStart
 " 声明
 " :GoDef
+" 在光标下显示有关标识符的有用信息，例如变量类型或函数签名
+" :GoInfo
 " 查找文档
 " :GoDoc / :GoDocBrowser
 " 加载/移除包
 " :GoImport / GoDrop
-" type-safe renaming
+" 显示光标下的标识符实现的接口
+" :GoImplements
+" 重命名type-safe renaming
 " :GoRename
 " 查看test覆盖率
-" :GoCoverage.
+" :GoCoverage
+" 切换测试覆盖率结果的显示
+" :GoCoverageToggle
 " 增加/移除 tags
 " :GoAddTags / :GoRemoveTags
 " Call golangci-lint with :GoMetaLinter to invoke all possible linters (golint, vet, errcheck, deadcode, etc.) and put the result in the quickfix or location list.
@@ -505,6 +565,46 @@ let g:airline#extensions#tabline#show_tab_nr = 0
 " [Commands] --expect expression for directly executing the command
 "let g:fzf_commands_expect = 'alt-enter,ctrl-x'
 
+" 全屏展示搜索
+let g:fzf_layout = { 'down': '~100%' }
+let g:fzf_preview_window = ['down:50%']
+
+" fzf搜索框colors配置，让其符合当前主题
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'Normal'],
+  \ 'bg':      ['bg', 'Normal'],
+  \ 'hl':      ['fg', 'Function'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'Visual', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'Ignore'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
+
+" RG搜索, filename表示对什么文件进行搜索
+function! RGSearch(filename)
+	let command_fmt = 'rg --with-filename --column --line-number'
+		\ . ' --no-heading --color=always --smart-case -- %s '
+		\ . a:filename . ' || true'
+    let initial_command = printf(command_fmt, shellescape(''))
+    let reload_command = printf(command_fmt, '{q}')
+    let spec = {'options': ['--phony', '--query', '', '--bind',
+		\ 'change:reload:'.reload_command]}
+    call fzf#vim#grep(initial_command, 1, fzf#vim#with_preview(spec), 0)
+endfunction
+
+" 搜索文件
+nnoremap <leader>sf :Files<CR>
+" 搜索全局内容
+nnoremap <leader>sg :call RGSearch('')<CR>
+" 搜索当前文件内容
+nnoremap <leader>sl :call RGSearch(fnameescape(expand('%')))<CR>
+" 搜索buffer
+nnoremap <leader>sb :Buffers<CR>
 
 
 "===============================================================================
@@ -556,17 +656,37 @@ let g:ycm_goto_buffer_command = 'split-or-existing-window'
 
 
 "配置和 SirVer/ultisnips 冲突的快捷键
-let g:ycm_key_list_select_completion = ['<C-n>', '<space>']
-let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
-let g:SuperTabDefaultCompletionType = '<C-n>'
+"let g:ycm_key_list_select_completion = ['<C-n>', '<space>']
+"let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+"let g:SuperTabDefaultCompletionType = '<C-n>'
 
-" better key bindings for UltiSnipsExpandTrigger
-let g:UltiSnipsExpandTrigger = "<tab>"
-let g:UltiSnipsJumpForwardTrigger = "<tab>"
-let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+"" better key bindings for UltiSnipsExpandTrigger
+"let g:UltiSnipsExpandTrigger = "<tab>"
+"let g:UltiSnipsJumpForwardTrigger = "<tab>"
+"let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
-
+"===============================================================================
+">>>>>>>>>>>>>>>> Copilot <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+"===============================================================================
+imap <silent><script><expr> <C-V> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
 " =========================================
+
+"===============================================================================
+">>>>>>>>>>>>>>>> Copilot <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+"===============================================================================
+"let g:gotests_bin = '/home/user/go/bin/gotests'
+"let g:gotests_template_dir = '/home/user/templates/'
+"
+"Call :GoTests to generate a test for the function at the current line or functions selected in visual mode.
+"Call :GoTestsAll to generate tests for all functions in the current buffer.
+
+
+"===============================================================================
+">>>>>>>>>>>>>>>> rhysd/vim-clang-format <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+"===============================================================================
+"autocmd FileType proto ClangFormatAutoEnable
+
 
 " ---你就得让Vim知道，你到底是在输入还是在粘贴----
 " ---手工设置: before（:set paste）after（:set nopaste）
