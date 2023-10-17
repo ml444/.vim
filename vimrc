@@ -98,7 +98,7 @@ set colorcolumn=80  " 高亮第80列
 set cursorline      " 高亮光标所在行
 set mouse=a         " 允许鼠标点击定位
 set autochdir       " 自动切换当前目录为当前文件所在的目录
-"let mapleader=";"  " 定义快捷键的前缀，即<Leader>
+let mapleader=" "  " 定义快捷键的前缀，即<Leader>
 
 "inoremap <S><CR> <Esc>o
 "nnoremap <S><CR> o
@@ -661,7 +661,7 @@ let g:ycm_goto_buffer_command = 'split-or-existing-window'
 "let g:SuperTabDefaultCompletionType = '<C-n>'
 
 "" better key bindings for UltiSnipsExpandTrigger
-"let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsExpandTrigger = "<tab-space>"
 "let g:UltiSnipsJumpForwardTrigger = "<tab>"
 "let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
 
