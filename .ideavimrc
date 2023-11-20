@@ -1,0 +1,4 @@
+let mapleader=' '
+
+inoremap jk <ESC>
+inoremap <S-Enter> <ESC>o
